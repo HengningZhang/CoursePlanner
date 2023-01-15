@@ -1,36 +1,42 @@
 import React from "react";
 import Course from "./Course";
-import { useState, useEffect } from "react"
+import { useState} from "react"
 export default function CoursePlanner(props){
-    // const courseList = props.courses.map((course) => (
-        // <Course
-        //     id={course.id}
-        //     courseName={course.courseName}
-        //     courseDay={props.courseDay}
-        //     startTime={props.startTime}
-        //     endTime={props.endTime}
-        //   />
-    //     )
-    // );
     const [courseName, setCourseName] = useState("");
+    const [session, setSession] = useState("");
     const [courseDay, setCourseDay] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
-    const [courseKey, setCourseKey] = useState("");
-    const [courses, setCourses] = useState([]);
+    const [courses, setCourses] = useState(new Map());
 
     function handleClick(){
       console.log("clicked",courseName)
-      if(courseName=="" || courseDay=="" || startTime=="" || endTime==""){
+      if(courseName==="" || session==="" || courseDay==="" || startTime==="" || endTime===""){
         alert("invalid input")
         return;
       }
       var newCourses=courses
-      newCourses.push({courseName:courseName,
-        courseDay:courseDay,
-        startTime:startTime,
-        endTime:endTime})
+      if(newCourses.has(courseName)){
+        if(newCourses.get(courseName).has(session)){
+          newCourses.get(courseName).get(session)[parseInt(courseDay)-1]=[startTime,endTime]
+        }else{
+          newCourses.get(courseName).set(session,[0,0,0,0,0,0,0])
+          newCourses.get(courseName).get(session)[parseInt(courseDay)-1]=[startTime,endTime]
+        }
+      }else{
+        var newMap=new Map()
+        newCourses.set(courseName,newMap)
+        newCourses.get(courseName).set(session,[0,0,0,0,0,0,0])
+        newCourses.get(courseName).get(session)[parseInt(courseDay)-1]=[startTime,endTime]
+      }
+      console.log(newCourses)
+      console.log(Array.from(newCourses))
+      // newCourses.push({courseName:courseName,
+      //   courseDay:courseDay,
+      //   startTime:startTime,
+      //   endTime:endTime})
       setCourses(newCourses)
+      setSession("")
       setCourseName("")
       setCourseDay("")
       setStartTime("")
@@ -51,10 +57,19 @@ export default function CoursePlanner(props){
               </label>
               <br />
               <label>
+              Session ID:
+              <input
+                  name="session"
+                  type="text"
+                  value={session}
+                  onChange={e=>setSession(e.target.value)} />
+              </label>
+              <br />
+              <label>
               Course Day in week:
               <input
                   name="courseDay"
-                  type="text"
+                  type="number"
                   value={courseDay}
                   onChange={e=>setCourseDay(e.target.value)} />
               </label>
@@ -80,14 +95,11 @@ export default function CoursePlanner(props){
           </form>
           <button onClick={handleClick}>Add Course</button>
           <ul>
-            {courses.map((course) => 
-            <li key={course.courseName}>
+            {Array.from(courses).map((courseInfo) => 
+            <li key={courseInfo[0]}>
               <Course
-              id={course.id}
-              courseName={course.courseName}
-              courseDay={course.courseDay}
-              startTime={course.startTime}
-              endTime={course.endTime}
+              courseName={courseInfo[0]}
+              sessions={courseInfo[1]}
               />
             </li>)}
           </ul>
