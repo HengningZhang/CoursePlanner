@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import CoursePlanner from "./CoursePlanner"
 
 export function App() {
   var sections;
@@ -81,8 +82,8 @@ export function App() {
     //   </header>
     // </div>
     <div>
-  
-      <h3 id="head">Input Courses</h3>
+      <CoursePlanner></CoursePlanner>
+      {/* <h3 id="head">Input Courses</h3>
       <p id="courseNSection">Inputting:Course1 Section1</p>
       <form class="" action="index.html" method="post">
           <input type="text" name="day" value="" /><br/>
@@ -106,7 +107,7 @@ export function App() {
       <script type="text/javascript">
           
           
-      </script>
+      </script> */}
 </div>
     );
 }
