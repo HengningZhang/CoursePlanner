@@ -31,15 +31,12 @@ export default function CoursePlanner(props){
       var plans=[]
       var plan=[[],[],[],[],[],[],[]]
       var courseNames=Array.from(coursesForPlan.keys())
-      console.log(courseNames[0])
-      var sessions=coursesForPlan.get(courseNames[0])
-      console.log("sessions",sessions)
       function dfs(i, plan){
         if(i==courseNames.length){
           plans.push(JSON.parse(JSON.stringify(plan)))
           return
         }
-        sessions=coursesForPlan.get(courseNames[i])
+        var sessions=coursesForPlan.get(courseNames[i])
         //[["1",[0,0,0,0,0,0,[1234,2345]]],["2",[0,0,0,0,0,0,[1234,2345]]]]
         for(var asession of sessions){
           var sessionCheck = 1;
@@ -49,13 +46,15 @@ export default function CoursePlanner(props){
             var classTime=weekClassTime[j];
             if(classTime!==0){
               for(var k = 0; k < plan[j].length; ++j){
-                if((plan[j][k].endTime > classTime[1] && plan[j][k].startTime < classTime[1] )
-                  || (plan[j][k].endTime < classTime[1] && plan[j][k].endTime < classTime[0])){
+                if((plan[j][k].endTime >= classTime[1] && plan[j][k].startTime <= classTime[1] )
+                  || (plan[j][k].endTime <= classTime[1] && plan[j][k].endTime <= classTime[0])){
                     sessionCheck = 0;
+                    break;
                 }
               }
             }
           }
+          console.log("l",sessionCheck,courseNames[i],sessionID,plan[0].length,plan[0].length==1?plan[0][0].startTime:" ")
           if(sessionCheck){
             var pushList=[];
             for(var j=0;j<weekClassTime.length;j++){
