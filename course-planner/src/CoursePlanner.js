@@ -46,8 +46,15 @@ export default function CoursePlanner(props){
             var classTime=weekClassTime[j];
             if(classTime!==0){
               for(var k = 0; k < plan[j].length; ++j){
-                if((plan[j][k].endTime >= classTime[1] && plan[j][k].startTime <= classTime[1] )
-                  || (plan[j][k].endTime <= classTime[1] && plan[j][k].endTime <= classTime[0])){
+                var start1=plan[j][k].startTime
+                var end1=plan[j][k].endTime
+                var start2=classTime[0]
+                var end2=classTime[1]
+                // start1 end2 end1
+
+                //  start2 end1 end2
+                if((end1 >= end2 && start1 <= end2 )
+                  || (end1 <= end2 && end1 >= start2)){
                     sessionCheck = 0;
                     break;
                 }
