@@ -1,6 +1,7 @@
 import React from "react";
 import Course from "./Course";
 import { useState} from "react"
+import Plan from "./Plan"
 export default function CoursePlanner(props){
     const [courseName, setCourseName] = useState("");
     const [session, setSession] = useState("");
@@ -8,7 +9,7 @@ export default function CoursePlanner(props){
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [courses, setCourses] = useState(new Map());
-    const [plans,setPlans] = useState([]);
+    const [displayingPlans,setDisplayingPlans] = useState([]);
     function computePlan(){
       //[[[[courseName,sessionID,startTime,endTime],[courseName,sessionID,startTime,endTime]],[],[],[],[],[],[]],[*]]
 
@@ -36,19 +37,20 @@ export default function CoursePlanner(props){
       function dfs(i, plan){
         if(i==courseNames.length){
           plans.push(JSON.parse(JSON.stringify(plan)))
+          return
         }
         sessions=coursesForPlan.get(courseNames[i])
         //[["1",[0,0,0,0,0,0,[1234,2345]]],["2",[0,0,0,0,0,0,[1234,2345]]]]
-        for(session of sessions){
+        for(var asession of sessions){
           var sessionCheck = 1;
-          var sessionID=session[0];
-          var weekClassTime=session[1];
+          var sessionID=asession[0];
+          var weekClassTime=asession[1];
           for(var j=0;j<weekClassTime.length;j++){
             var classTime=weekClassTime[j];
             if(classTime!==0){
-              for(var k = 0; k < plan[j].size(); ++j){
-                if(plan[j][k].endTime > classTime[1] && plan[j][k].startTime < classTime[1] 
-                  || plan[j][k].endTime < classTime[1] && plan[j][k].endTime < classTime[0]){
+              for(var k = 0; k < plan[j].length; ++j){
+                if((plan[j][k].endTime > classTime[1] && plan[j][k].startTime < classTime[1] )
+                  || (plan[j][k].endTime < classTime[1] && plan[j][k].endTime < classTime[0])){
                     sessionCheck = 0;
                 }
               }
@@ -76,6 +78,8 @@ export default function CoursePlanner(props){
           }
         }
       }
+      dfs(0,plan)
+      setDisplayingPlans(plans)
     }
 
     function overlap(interval1,interval2){
@@ -185,6 +189,7 @@ export default function CoursePlanner(props){
               />
             </li>)}
           </ul>
+          <Plan plans={displayingPlans}></Plan>
       </div>
     )
 }
