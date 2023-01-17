@@ -9,6 +9,67 @@ export default function CoursePlanner(props){
     const [endTime, setEndTime] = useState("");
     const [courses, setCourses] = useState(new Map());
 
+    function computePlan(){
+      //[[[[courseName,sessionID,startTime,endTime],[courseName,sessionID,startTime,endTime]],[],[],[],[],[],[]],[*]]
+
+
+      //course1 session1 mon 1000-1200
+      //course1 session2 mon 1201-1401
+      //course2 session1 mon 1000-1200
+      //course2 session2 mon 1201-1401
+
+      var coursesForPlan = new Map(courses)
+      // for(var i=0;i<courseArray.length;i++){
+      //   courseArray[i][1]=Array.from(courseArray[i][1])
+      // }
+      // console.log(courseArray)
+      for(var key of coursesForPlan.keys()){
+        coursesForPlan.set(key,Array.from(coursesForPlan.get(key)))
+      }
+      console.log(coursesForPlan)
+      var plans=[]
+      var plan=[[],[],[],[],[],[],[]]
+      var courseNames=Array.from(coursesForPlan.keys())
+      console.log(courseNames[0])
+      var sessions=coursesForPlan.get(courseNames[0])
+      console.log("sessions",sessions)
+      function dfs(i){
+        if(i==courseNames.length){
+          plans.push(JSON.parse(JSON.stringify(plan)))
+        }
+        sessions=coursesForPlan.get(courseNames[i])
+        //[["1",[0,0,0,0,0,0,[1234,2345]]],["2",[0,0,0,0,0,0,[1234,2345]]]]
+        for(session of sessions){
+          var sessionID=session[0]
+          var weekClassTime=session[1]
+          for(var i=0;i<weekClassTime.length;i++){
+            var classTime=weekClassTime[i]
+            if(classTime!==0){
+              const classObj={
+                courseName:courseNames[i],
+                session:sessionID,
+                startTime:classTime[0],
+                endTime:classTime[1]
+              }
+              for(classTime of plan){}
+            }
+          }
+        }
+      }
+    }
+
+    function overlap(interval1,interval2){
+      if(interval1.startTime>interval2.startTime){
+        var temp = interval1
+        interval1=interval2
+        interval2=temp
+      }
+      if(interval2.startTime<=interval1.endTime){
+        return true
+      }
+      return false
+    }
+
     function handleClick(){
       console.log("clicked",courseName)
       if(courseName==="" || session==="" || courseDay==="" || startTime==="" || endTime===""){
@@ -94,6 +155,7 @@ export default function CoursePlanner(props){
               
           </form>
           <button onClick={handleClick}>Add Course</button>
+          <button onClick={computePlan}>Compute Plan</button>
           <ul>
             {Array.from(courses).map((courseInfo) => 
             <li key={courseInfo[0]}>
