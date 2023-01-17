@@ -33,25 +33,45 @@ export default function CoursePlanner(props){
       console.log(courseNames[0])
       var sessions=coursesForPlan.get(courseNames[0])
       console.log("sessions",sessions)
-      function dfs(i){
+      function dfs(i, plan){
         if(i==courseNames.length){
           plans.push(JSON.parse(JSON.stringify(plan)))
         }
         sessions=coursesForPlan.get(courseNames[i])
         //[["1",[0,0,0,0,0,0,[1234,2345]]],["2",[0,0,0,0,0,0,[1234,2345]]]]
         for(session of sessions){
-          var sessionID=session[0]
-          var weekClassTime=session[1]
-          for(var i=0;i<weekClassTime.length;i++){
-            var classTime=weekClassTime[i]
+          var sessionCheck = 1;
+          var sessionID=session[0];
+          var weekClassTime=session[1];
+          for(var j=0;j<weekClassTime.length;j++){
+            var classTime=weekClassTime[j];
             if(classTime!==0){
-              const classObj={
-                courseName:courseNames[i],
-                session:sessionID,
-                startTime:classTime[0],
-                endTime:classTime[1]
+              for(var k = 0; k < plan[j].size(); ++j){
+                if(plan[j][k].endTime > classTime[1] && plan[j][k].startTime < classTime[1] 
+                  || plan[j][k].endTime < classTime[1] && plan[j][k].endTime < classTime[0]){
+                    sessionCheck = 0;
+                }
               }
-              for(classTime of plan){}
+            }
+          }
+          if(sessionCheck){
+            var pushList;
+            for(var j=0;j<weekClassTime.length;j++){
+              var classTime=weekClassTime[j];
+              if(classTime!==0){
+                const classObj={
+                  courseName:courseNames[i],
+                  session:sessionID,
+                  startTime:classTime[0],
+                  endTime:classTime[1]
+                }
+                pushList.push(j);
+                plan[j].push(classObj);
+              }
+            }
+            dfs(i + 1, plan);
+            for(var j = 0; j < pushList.length; ++j){
+              plan[pushList[j]].pop();
             }
           }
         }
