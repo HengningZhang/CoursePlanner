@@ -8,7 +8,7 @@ export default function CoursePlanner(props){
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [courses, setCourses] = useState(new Map());
-
+    const [plans,setPlans] = useState([]);
     function computePlan(){
       //[[[[courseName,sessionID,startTime,endTime],[courseName,sessionID,startTime,endTime]],[],[],[],[],[],[]],[*]]
 
@@ -55,7 +55,7 @@ export default function CoursePlanner(props){
             }
           }
           if(sessionCheck){
-            var pushList;
+            var pushList=[];
             for(var j=0;j<weekClassTime.length;j++){
               var classTime=weekClassTime[j];
               if(classTime!==0){
