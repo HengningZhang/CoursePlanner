@@ -6,6 +6,7 @@ set sql_mode='no_auto_create_user,no_engine_substitution';
 DROP TABLE IF EXISTS courses;
 CREATE TABLE courses(
 	course_id VARCHAR(255),
+    course_name VARCHAR(255),
     section INT,
     total_slots INT,
     currently_enrolled INT,
